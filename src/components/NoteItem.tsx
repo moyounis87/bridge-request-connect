@@ -2,7 +2,7 @@
 import { Note } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
-import { MessageSquare, Note as NoteIcon } from "lucide-react";
+import { MessageSquare, FileText } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 interface NoteItemProps {
@@ -20,7 +20,7 @@ export function NoteItem({ note }: NoteItemProps) {
             {isTranscript ? (
               <MessageSquare className="h-4 w-4 mr-2" />
             ) : (
-              <NoteIcon className="h-4 w-4 mr-2" />
+              <FileText className="h-4 w-4 mr-2" />
             )}
             {isTranscript ? "Call Transcript" : "Note"}
           </CardTitle>

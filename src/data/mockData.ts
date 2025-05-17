@@ -7,6 +7,7 @@ export const currentUser: User = {
   email: "alex@example.com",
   role: "sales",
   teamId: "t1",
+  region: "north-america",
 };
 
 export const users: User[] = [
@@ -17,6 +18,7 @@ export const users: User[] = [
     email: "sam@example.com",
     role: "product",
     teamId: "t1",
+    region: "north-america",
   },
   {
     id: "u3",
@@ -24,6 +26,7 @@ export const users: User[] = [
     email: "jamie@example.com",
     role: "admin",
     teamId: "t1",
+    region: "emea",
   },
   {
     id: "u4",
@@ -31,6 +34,7 @@ export const users: User[] = [
     email: "casey@example.com",
     role: "sales",
     teamId: "t1",
+    region: "apac",
   },
 ];
 
@@ -48,6 +52,7 @@ export const requests: Request[] = [
     lastUpdatedDate: "2025-05-12T14:30:00Z",
     requestedTimeline: "Q2 2025",
     useCase: "Customer account management needs real-time data synchronization",
+    category: "api-integration",
   },
   {
     id: "r2",
@@ -62,6 +67,7 @@ export const requests: Request[] = [
     lastUpdatedDate: "2025-05-10T11:20:00Z",
     requestedTimeline: "End of Q2 2025",
     useCase: "Monthly compliance reporting to regulatory agencies",
+    category: "reporting",
   },
   {
     id: "r3",
@@ -76,6 +82,7 @@ export const requests: Request[] = [
     lastUpdatedDate: "2025-05-05T09:45:00Z",
     requestedTimeline: "Q3 2025",
     useCase: "Executive dashboards for C-suite stakeholders",
+    category: "user-interface",
   },
   {
     id: "r4",
@@ -90,6 +97,7 @@ export const requests: Request[] = [
     lastUpdatedDate: "2025-04-28T16:15:00Z",
     requestedTimeline: "ASAP",
     useCase: "Field teams need real-time alerts when not at their desks",
+    category: "user-interface",
   },
   {
     id: "r5",
@@ -104,6 +112,7 @@ export const requests: Request[] = [
     lastUpdatedDate: "2025-05-14T08:45:00Z",
     requestedTimeline: "No rush",
     useCase: "Data analysis teams need to create complex segment reports",
+    category: "reporting",
   },
 ];
 

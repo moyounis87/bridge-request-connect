@@ -123,11 +123,12 @@ export default function RequestDetailPage() {
   };
 
   const handleAddNote = () => {
-    if (noteContent) {
+    if (noteContent && user) {
       addNote({
         requestId: id,
         content: noteContent,
-        type: noteType
+        type: noteType,
+        createdById: user.id  // Add the missing createdById property
       });
       setNoteDialogOpen(false);
       setNoteContent("");
