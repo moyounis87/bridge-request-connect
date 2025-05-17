@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { User, UserRole } from "../types";
 import { currentUser } from "../data/mockData";
 import { useToast } from "@/components/ui/use-toast";
@@ -15,11 +15,22 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // For the MVP, we'll set a mock user by default
   const [user, setUser] = useState<User | null>(null);
   const { toast } = useToast();
 
   const isAuthenticated = !!user;
+
+  // Auto-login for development/demo purposes
+  useEffect(() => {
+    // Automatically set the current user from mock data when the app loads
+    setUser(currentUser);
+    
+    // Optional: Show a toast notification about the auto-login
+    toast({
+      title: "Auto-login enabled",
+      description: "Logged in automatically for development purposes.",
+    });
+  }, []);
 
   const login = async (email: string, password: string) => {
     // In a real application, this would make an API call
