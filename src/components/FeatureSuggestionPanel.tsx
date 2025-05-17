@@ -265,24 +265,24 @@ export function FeatureSuggestionPanel({ category, title, description }: Feature
           onValueChange={setSelectedTab}
           className="space-y-6"
         >
-          <TabsList className="grid grid-cols-3 w-full gap-2 p-1 rounded-md mb-2">
+          <TabsList className="grid grid-cols-3 w-full gap-4">
             <TabsTrigger 
               value="related" 
-              className="flex items-center gap-2 px-4 py-2 transition-all rounded-md border-b-2 border-transparent data-[state=active]:border-primary"
+              className="flex items-center justify-center gap-2 transition-all border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary"
             >
               <Lightbulb className="h-4 w-4" />
               <span className="hidden sm:inline">Related Features</span>
             </TabsTrigger>
             <TabsTrigger 
               value="bundles" 
-              className="flex items-center gap-2 px-4 py-2 transition-all rounded-md border-b-2 border-transparent data-[state=active]:border-primary"
+              className="flex items-center justify-center gap-2 transition-all border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary"
             >
               <Package className="h-4 w-4" />
               <span className="hidden sm:inline">Feature Bundles</span>
             </TabsTrigger>
             <TabsTrigger 
               value="timing" 
-              className="flex items-center gap-2 px-4 py-2 transition-all rounded-md border-b-2 border-transparent data-[state=active]:border-primary"
+              className="flex items-center justify-center gap-2 transition-all border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary"
             >
               <Calendar className="h-4 w-4" />
               <span className="hidden sm:inline">Release Timing</span>
@@ -290,7 +290,7 @@ export function FeatureSuggestionPanel({ category, title, description }: Feature
           </TabsList>
 
           {/* Related Features Tab */}
-          <TabsContent value="related" className="space-y-4 pt-2">
+          <TabsContent value="related" className="space-y-4 pt-3">
             <div className="text-sm text-muted-foreground mb-3">
               Features that might deliver similar outcomes to "{title}":
             </div>
@@ -330,7 +330,7 @@ export function FeatureSuggestionPanel({ category, title, description }: Feature
           </TabsContent>
 
           {/* Feature Bundles Tab */}
-          <TabsContent value="bundles" className="space-y-4 pt-2">
+          <TabsContent value="bundles" className="space-y-4 pt-3">
             <div className="text-sm text-muted-foreground mb-3">
               Potential feature bundles that include "{title}":
             </div>
@@ -378,7 +378,7 @@ export function FeatureSuggestionPanel({ category, title, description }: Feature
           </TabsContent>
 
           {/* Release Timing Tab */}
-          <TabsContent value="timing" className="space-y-4 pt-2">
+          <TabsContent value="timing" className="space-y-4 pt-3">
             <div className="text-sm text-muted-foreground mb-3">
               Recommended release timing for "{title}" based on sales cycles:
             </div>
