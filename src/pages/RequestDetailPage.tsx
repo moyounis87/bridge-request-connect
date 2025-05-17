@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useRequest } from "@/context/RequestContext";
@@ -112,11 +113,12 @@ export default function RequestDetailPage() {
       return;
     }
 
-    if (requestId) {
+    if (requestId && user) {
       addNote({
         requestId,
         content: noteContent,
         type: noteType,
+        createdById: user.id, // Add the missing createdById property
       });
       setIsNoteDialogOpen(false);
       setNoteContent("");
