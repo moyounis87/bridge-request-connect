@@ -1,20 +1,54 @@
 
+import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useRequest } from "@/context/RequestContext";
-import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/context/AuthContext";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/StatusBadge";
+import { CategoryBadge } from "@/components/CategoryBadge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RequestCategory } from "@/types";
+import { Filter } from "lucide-react";
 
 export default function RoadmapPage() {
   const { requests } = useRequest();
+  const { user } = useAuth();
+  
+  const [categoryFilter, setCategoryFilter] = useState<RequestCategory | "all">("all");
+  const [viewFilter, setViewFilter] = useState<"own" | "all" | "team" | "region">("all");
   
   // Filter requests that are scheduled (accepted, planned, in-development)
   const roadmapItems = requests.filter(
-    (request) =>
-      request.currentStatus === "accepted" ||
-      request.currentStatus === "planned" ||
-      request.currentStatus === "in-development"
+    (request) => {
+      // Filter by roadmap status
+      const isRoadmapStatus = 
+        request.currentStatus === "accepted" ||
+        request.currentStatus === "planned" ||
+        request.currentStatus === "in-development";
+      
+      // Filter by category if one is selected
+      const matchesCategory = categoryFilter === "all" || request.category === categoryFilter;
+      
+      // Filter by view (own, team, region)
+      let matchesView = true;
+      if (viewFilter === "own") {
+        matchesView = request.requestedById === user?.id;
+      } else if (viewFilter === "team" && user?.teamId) {
+        matchesView = request.requestedBy.teamId === user.teamId;
+      } else if (viewFilter === "region" && user?.region) {
+        matchesView = request.requestedBy.region === user.region;
+      }
+      
+      return isRoadmapStatus && matchesCategory && matchesView;
+    }
   );
   
   // Group requests by quarter
@@ -49,6 +83,56 @@ export default function RoadmapPage() {
           </p>
         </div>
         
+        {/* Filters */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-md flex items-center">
+              <Filter className="h-4 w-4 mr-2" />
+              Roadmap Filters
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Select
+                  value={viewFilter}
+                  onValueChange={(value) => setViewFilter(value as "own" | "all" | "team" | "region")}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by view" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Requests</SelectItem>
+                    <SelectItem value="own">My Requests</SelectItem>
+                    <SelectItem value="team">My Team</SelectItem>
+                    <SelectItem value="region">My Region</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Select
+                  value={categoryFilter}
+                  onValueChange={(value) => setCategoryFilter(value as RequestCategory | "all")}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="api-integration">API Integration</SelectItem>
+                    <SelectItem value="user-interface">User Interface</SelectItem>
+                    <SelectItem value="reporting">Reporting</SelectItem>
+                    <SelectItem value="security">Security</SelectItem>
+                    <SelectItem value="performance">Performance</SelectItem>
+                    <SelectItem value="compliance">Compliance</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
         <Tabs defaultValue="timeline" className="space-y-6">
           <TabsList>
             <TabsTrigger value="timeline">Timeline View</TabsTrigger>
@@ -77,8 +161,11 @@ export default function RoadmapPage() {
                           <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
                             {item.description}
                           </p>
-                          <div className="text-xs text-muted-foreground">
-                            {item.customerName}
+                          <div className="flex items-center justify-between">
+                            <CategoryBadge category={item.category || 'other'} />
+                            <div className="text-xs text-muted-foreground">
+                              {item.customerName}
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
@@ -106,13 +193,16 @@ export default function RoadmapPage() {
                   .map((item) => (
                     <Card key={item.id} className="hover:shadow-md transition-shadow">
                       <CardContent className="p-4">
-                        <Link
-                          to={`/requests/${item.id}`}
-                          className="font-medium hover:text-primary hover:underline"
-                        >
-                          {item.title}
-                        </Link>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <div className="flex justify-between items-start mb-2">
+                          <Link
+                            to={`/requests/${item.id}`}
+                            className="font-medium hover:text-primary hover:underline"
+                          >
+                            {item.title}
+                          </Link>
+                          <CategoryBadge category={item.category || 'other'} />
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
                           {item.customerName}
                         </p>
                       </CardContent>
@@ -136,13 +226,16 @@ export default function RoadmapPage() {
                   .map((item) => (
                     <Card key={item.id} className="hover:shadow-md transition-shadow">
                       <CardContent className="p-4">
-                        <Link
-                          to={`/requests/${item.id}`}
-                          className="font-medium hover:text-primary hover:underline"
-                        >
-                          {item.title}
-                        </Link>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <div className="flex justify-between items-start mb-2">
+                          <Link
+                            to={`/requests/${item.id}`}
+                            className="font-medium hover:text-primary hover:underline"
+                          >
+                            {item.title}
+                          </Link>
+                          <CategoryBadge category={item.category || 'other'} />
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
                           {item.customerName}
                         </p>
                       </CardContent>
@@ -166,13 +259,16 @@ export default function RoadmapPage() {
                   .map((item) => (
                     <Card key={item.id} className="hover:shadow-md transition-shadow">
                       <CardContent className="p-4">
-                        <Link
-                          to={`/requests/${item.id}`}
-                          className="font-medium hover:text-primary hover:underline"
-                        >
-                          {item.title}
-                        </Link>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <div className="flex justify-between items-start mb-2">
+                          <Link
+                            to={`/requests/${item.id}`}
+                            className="font-medium hover:text-primary hover:underline"
+                          >
+                            {item.title}
+                          </Link>
+                          <CategoryBadge category={item.category || 'other'} />
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
                           {item.customerName}
                         </p>
                       </CardContent>

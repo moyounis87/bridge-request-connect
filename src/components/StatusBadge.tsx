@@ -11,9 +11,34 @@ interface StatusBadgeProps {
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const displayText = status.replace(/-/g, ' ');
   
+  // Get variant and color based on status
+  const getVariant = () => {
+    switch (status) {
+      case 'submitted':
+        return 'outline';
+      case 'under-review':
+        return 'secondary';
+      case 'accepted':
+        return 'success';
+      case 'declined':
+        return 'destructive';
+      case 'planned':
+        return 'default';
+      case 'in-development':
+        return 'warning';
+      case 'released':
+        return 'success';
+      default:
+        return 'default';
+    }
+  };
+  
   return (
-    <Badge className={cn(`status-badge-${status}`, className)}>
-      {displayText.charAt(0).toUpperCase() + displayText.slice(1)}
+    <Badge 
+      variant={getVariant()} 
+      className={cn("capitalize", className)}
+    >
+      {displayText}
     </Badge>
   );
 }

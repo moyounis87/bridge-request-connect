@@ -17,6 +17,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RequestCategory } from "@/types";
 
 export default function NewRequestPage() {
   const { createRequest } = useRequest();
@@ -30,6 +38,8 @@ export default function NewRequestPage() {
     customerName: "",
     requestedTimeline: "",
     useCase: "",
+    crmLink: "",
+    category: "other" as RequestCategory,
   });
   
   const [currentStep, setCurrentStep] = useState(1);
@@ -39,6 +49,10 @@ export default function NewRequestPage() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +60,7 @@ export default function NewRequestPage() {
     if (currentStep < totalSteps) {
       // Validate current step
       if (currentStep === 1) {
-        if (!formData.title || !formData.description || !formData.businessImpact) {
+        if (!formData.title || !formData.description || !formData.businessImpact || !formData.category) {
           toast({
             title: "Please fill all required fields",
             variant: "destructive",
@@ -120,6 +134,29 @@ export default function NewRequestPage() {
                   </div>
                   
                   <div className="space-y-2">
+                    <Label htmlFor="category">
+                      Category <span className="text-destructive">*</span>
+                    </Label>
+                    <Select
+                      value={formData.category}
+                      onValueChange={(value) => handleSelectChange("category", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="api-integration">API Integration</SelectItem>
+                        <SelectItem value="user-interface">User Interface</SelectItem>
+                        <SelectItem value="reporting">Reporting</SelectItem>
+                        <SelectItem value="security">Security</SelectItem>
+                        <SelectItem value="performance">Performance</SelectItem>
+                        <SelectItem value="compliance">Compliance</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
                     <Label htmlFor="description">
                       Description <span className="text-destructive">*</span>
                     </Label>
@@ -162,6 +199,19 @@ export default function NewRequestPage() {
                       onChange={handleChange}
                       placeholder="E.g., Acme Corp or 'Multiple Customers'"
                       required
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="crmLink">
+                      CRM Opportunity Link
+                    </Label>
+                    <Input
+                      id="crmLink"
+                      name="crmLink"
+                      value={formData.crmLink}
+                      onChange={handleChange}
+                      placeholder="E.g., https://crm.company.com/opportunities/123"
                     />
                   </div>
                   
