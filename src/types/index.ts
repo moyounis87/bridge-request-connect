@@ -1,4 +1,3 @@
-
 export type UserRole = 'sales' | 'product' | 'admin';
 
 export type Region = 'north-america' | 'emea' | 'apac' | 'latam';
@@ -49,6 +48,18 @@ export interface CRMOpportunity {
   lastUpdatedDate: string;
 }
 
+export interface RevenuePrediction {
+  predictedRevenue: number;
+  probabilityOfSuccess: number;
+  confidenceScore: number; 
+  factors: {
+    categoryBaseline: number;
+    customerSizeImpact: string;
+    urgencyImpact: string;
+    complexityImpact: string;
+  };
+}
+
 export interface Request {
   id: string;
   title: string;
@@ -66,6 +77,7 @@ export interface Request {
   opportunityId?: string;
   opportunity?: CRMOpportunity;
   category: RequestCategory;
+  revenuePrediction?: RevenuePrediction;
 }
 
 export interface StatusUpdate {

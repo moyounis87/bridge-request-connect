@@ -1,9 +1,9 @@
-
 import { createContext, useContext, useState, ReactNode } from "react";
 import { Request, RequestStatus, StatusUpdate, Note, RequestCategory } from "../types";
 import { requests as initialRequests, statusUpdates as initialStatusUpdates } from "../data/mockData";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "./AuthContext";
+import { predictRevenueImpact } from "@/utils/revenuePrediction";
 
 interface RequestContextType {
   requests: Request[];
@@ -21,7 +21,19 @@ interface RequestContextType {
 const RequestContext = createContext<RequestContextType | undefined>(undefined);
 
 export function RequestProvider({ children }: { children: ReactNode }) {
-  const [requests, setRequests] = useState<Request[]>(initialRequests.map(req => ({ ...req, category: req.category || 'other' })));
+  const [requests, setRequests] = useState<Request[]>(initialRequests.map(req => {
+    // Generate predictions for existing requests that don't have them
+    if (!req.revenuePrediction) {
+      const prediction = predictRevenueImpact({
+        category: req.category,
+        businessImpact: req.businessImpact,
+        requestedTimeline: req.requestedTimeline,
+        customerName: req.customerName
+      });
+      return { ...req, revenuePrediction: prediction };
+    }
+    return req;
+  }));
   const [statusUpdates, setStatusUpdates] = useState<StatusUpdate[]>(initialStatusUpdates);
   const [notes, setNotes] = useState<Note[]>([]);
   const { toast } = useToast();
@@ -38,6 +50,15 @@ export function RequestProvider({ children }: { children: ReactNode }) {
     }
 
     const now = new Date().toISOString();
+    
+    // Generate revenue prediction for the new request
+    const revenuePrediction = predictRevenueImpact({
+      category: requestData.category,
+      businessImpact: requestData.businessImpact,
+      requestedTimeline: requestData.requestedTimeline,
+      customerName: requestData.customerName
+    });
+    
     const newRequest: Request = {
       id: `r${requests.length + 1}`,
       ...requestData,
@@ -45,6 +66,7 @@ export function RequestProvider({ children }: { children: ReactNode }) {
       creationDate: now,
       lastUpdatedDate: now,
       currentStatus: "submitted",
+      revenuePrediction, // Add the prediction to the new request
     };
 
     setRequests([...requests, newRequest]);
