@@ -263,34 +263,40 @@ export function FeatureSuggestionPanel({ category, title, description }: Feature
           defaultValue="related"
           value={selectedTab}
           onValueChange={setSelectedTab}
-          className="space-y-6"
+          className="space-y-8"
         >
-          <TabsList className="grid grid-cols-3 w-full gap-4">
+          <TabsList className="flex w-full border-b">
             <TabsTrigger 
               value="related" 
-              className="flex items-center justify-center gap-2 transition-all border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary"
+              className="flex-1 px-4 py-3 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:border-b-2 data-[state=active]:text-primary font-medium"
             >
-              <Lightbulb className="h-4 w-4" />
-              <span className="hidden sm:inline">Related Features</span>
+              <div className="flex items-center justify-center gap-2">
+                <Lightbulb className="h-4 w-4" />
+                <span className="hidden sm:inline">Related Features</span>
+              </div>
             </TabsTrigger>
             <TabsTrigger 
               value="bundles" 
-              className="flex items-center justify-center gap-2 transition-all border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary"
+              className="flex-1 px-4 py-3 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:border-b-2 data-[state=active]:text-primary font-medium"
             >
-              <Package className="h-4 w-4" />
-              <span className="hidden sm:inline">Feature Bundles</span>
+              <div className="flex items-center justify-center gap-2">
+                <Package className="h-4 w-4" />
+                <span className="hidden sm:inline">Feature Bundles</span>
+              </div>
             </TabsTrigger>
             <TabsTrigger 
               value="timing" 
-              className="flex items-center justify-center gap-2 transition-all border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary"
+              className="flex-1 px-4 py-3 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:border-b-2 data-[state=active]:text-primary font-medium"
             >
-              <Calendar className="h-4 w-4" />
-              <span className="hidden sm:inline">Release Timing</span>
+              <div className="flex items-center justify-center gap-2">
+                <Calendar className="h-4 w-4" />
+                <span className="hidden sm:inline">Release Timing</span>
+              </div>
             </TabsTrigger>
           </TabsList>
 
           {/* Related Features Tab */}
-          <TabsContent value="related" className="space-y-4 pt-3">
+          <TabsContent value="related" className="space-y-4 pt-2">
             <div className="text-sm text-muted-foreground mb-3">
               Features that might deliver similar outcomes to "{title}":
             </div>
@@ -330,7 +336,7 @@ export function FeatureSuggestionPanel({ category, title, description }: Feature
           </TabsContent>
 
           {/* Feature Bundles Tab */}
-          <TabsContent value="bundles" className="space-y-4 pt-3">
+          <TabsContent value="bundles" className="space-y-4 pt-2">
             <div className="text-sm text-muted-foreground mb-3">
               Potential feature bundles that include "{title}":
             </div>
@@ -378,7 +384,7 @@ export function FeatureSuggestionPanel({ category, title, description }: Feature
           </TabsContent>
 
           {/* Release Timing Tab */}
-          <TabsContent value="timing" className="space-y-4 pt-3">
+          <TabsContent value="timing" className="space-y-4 pt-2">
             <div className="text-sm text-muted-foreground mb-3">
               Recommended release timing for "{title}" based on sales cycles:
             </div>
