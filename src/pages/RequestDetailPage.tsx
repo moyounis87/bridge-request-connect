@@ -1,6 +1,5 @@
-
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useRequest } from "@/context/RequestContext";
 import { useAuth } from "@/context/AuthContext";
 import { AppShell } from "@/components/AppShell";
@@ -51,14 +50,16 @@ import { RevenuePredictionCard } from "@/components/RevenuePredictionCard";
 import { RequestStatus } from "@/types";
 
 export default function RequestDetailPage() {
-  const { requestId } = useParams<{ requestId: string }>();
+  const { id } = useParams<{ id: string }>();
   const { getRequestById, getStatusUpdatesForRequest, updateRequestStatus, addNote, getNotesForRequest, updateOpportunityDetails } = useRequest();
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const [request, setRequest] = useState(getRequestById(requestId || ""));
-  const [statusUpdates, setStatusUpdates] = useState(getStatusUpdatesForRequest(requestId || ""));
-  const [notes, setNotes] = useState(getNotesForRequest(requestId || ""));
+  const [request, setRequest] = useState(id ? getRequestById(id) : null);
+  const [statusUpdates, setStatusUpdates] = useState(id ? getStatusUpdatesForRequest(id) : []);
+  const [notes, setNotes] = useState(id ? getNotesForRequest(id) : []);
+  const [loading, setLoading] = useState(true);
 
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
   const [newStatus, setNewStatus] = useState<RequestStatus>(request?.currentStatus || "submitted");
@@ -74,17 +75,31 @@ export default function RequestDetailPage() {
   const [opportunityCloseDate, setOpportunityCloseDate] = useState("");
 
   useEffect(() => {
-    if (requestId) {
-      const req = getRequestById(requestId);
+    setLoading(true);
+    if (id) {
+      const req = getRequestById(id);
       setRequest(req);
 
-      const updates = getStatusUpdatesForRequest(requestId);
-      setStatusUpdates(updates);
+      if (req) {
+        const updates = getStatusUpdatesForRequest(id);
+        setStatusUpdates(updates);
 
-      const notesForRequest = getNotesForRequest(requestId);
-      setNotes(notesForRequest);
+        const notesForRequest = getNotesForRequest(id);
+        setNotes(notesForRequest);
+      } else {
+        // Request not found, show toast and redirect
+        toast({
+          title: "Request not found",
+          description: "The request you're looking for doesn't exist or may have been deleted.",
+          variant: "destructive",
+        });
+        
+        // Optional: Redirect to requests list after a short delay
+        setTimeout(() => navigate("/requests"), 1500);
+      }
     }
-  }, [requestId, getRequestById, getStatusUpdatesForRequest, getNotesForRequest]);
+    setLoading(false);
+  }, [id, getRequestById, getStatusUpdatesForRequest, getNotesForRequest, toast, navigate]);
 
   const handleStatusUpdate = () => {
     if (!newStatus || !statusComment) {
@@ -96,8 +111,8 @@ export default function RequestDetailPage() {
       return;
     }
 
-    if (requestId) {
-      updateRequestStatus(requestId, newStatus, statusComment);
+    if (id) {
+      updateRequestStatus(id, newStatus, statusComment);
       setIsStatusDialogOpen(false);
       setStatusComment("");
     }
@@ -113,9 +128,9 @@ export default function RequestDetailPage() {
       return;
     }
 
-    if (requestId && user) {
+    if (id && user) {
       addNote({
-        requestId,
+        requestId: id,
         content: noteContent,
         type: noteType,
         createdById: user.id, // Add the missing createdById property
@@ -135,11 +150,23 @@ export default function RequestDetailPage() {
       return;
     }
 
-    if (requestId) {
-      updateOpportunityDetails(requestId, opportunityValue, opportunityStage, opportunityCloseDate);
+    if (id) {
+      updateOpportunityDetails(id, opportunityValue, opportunityStage, opportunityCloseDate);
       setIsOpportunityDialogOpen(false);
     }
   };
+
+  if (loading) {
+    return (
+      <AppShell>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold">Loading request...</h1>
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
 
   if (!request) {
     return (

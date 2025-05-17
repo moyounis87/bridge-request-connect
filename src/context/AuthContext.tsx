@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { User, UserRole } from "../types";
 import { currentUser } from "../data/mockData";
@@ -30,7 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       title: "Auto-login enabled",
       description: "Logged in automatically for development purposes.",
     });
-  }, []);
+  }, [toast]); // Add toast to dependency array
 
   const login = async (email: string, password: string) => {
     // In a real application, this would make an API call
