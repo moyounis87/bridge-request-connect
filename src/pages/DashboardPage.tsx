@@ -5,6 +5,7 @@ import { useRequest } from "@/context/RequestContext";
 import { metrics } from "@/data/mockData";
 import { AppShell } from "@/components/AppShell";
 import { MetricsCard } from "@/components/MetricsCard";
+import { FeatureSuggestionPanel } from "@/components/FeatureSuggestionPanel";
 import { BarChartBig, CheckCircle, ClockIcon, Filter, ListTodo } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ export default function DashboardPage() {
   const [viewFilter, setViewFilter] = useState<"own" | "all" | "team" | "region">("all");
   const [statusFilter, setStatusFilter] = useState<RequestStatus | "all">("all");
   const [categoryFilter, setCategoryFilter] = useState<RequestCategory | "all">("all");
+  const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
 
   // Apply filters
   const filteredRequests = requests.filter(request => {
@@ -50,6 +52,8 @@ export default function DashboardPage() {
   const recentRequests = [...filteredRequests]
     .sort((a, b) => new Date(b.lastUpdatedDate).getTime() - new Date(a.lastUpdatedDate).getTime())
     .slice(0, 5);
+
+  const selectedRequestData = recentRequests.find(req => req.id === selectedRequest);
 
   return (
     <AppShell>
@@ -161,42 +165,66 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentRequests.length > 0 ? (
-                recentRequests.map((request) => (
-                  <div key={request.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
-                    <div className="space-y-2">
-                      <div className="flex flex-wrap gap-2 items-center">
-                        <Link to={`/requests/${request.id}`} className="font-medium hover:text-primary">
-                          {request.title}
-                        </Link>
-                        <Badge variant="outline" className="capitalize">
-                          {request.category.replace(/-/g, ' ')}
-                        </Badge>
+        {/* Recent Activity with AI Feature Suggestions */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {recentRequests.length > 0 ? (
+                  recentRequests.map((request) => (
+                    <div 
+                      key={request.id} 
+                      className={`flex items-center justify-between border-b pb-4 last:border-0 last:pb-0 cursor-pointer ${selectedRequest === request.id ? 'bg-slate-50 -mx-4 px-4 rounded-md' : ''}`}
+                      onClick={() => setSelectedRequest(request.id)}
+                    >
+                      <div className="space-y-2">
+                        <div className="flex flex-wrap gap-2 items-center">
+                          <Link to={`/requests/${request.id}`} className="font-medium hover:text-primary">
+                            {request.title}
+                          </Link>
+                          <Badge variant="outline" className="capitalize">
+                            {request.category.replace(/-/g, ' ')}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <span>Requested by {request.requestedBy.name}</span>
+                          <span>•</span>
+                          <span>{format(new Date(request.lastUpdatedDate), "MMM d, yyyy")}</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>Requested by {request.requestedBy.name}</span>
-                        <span>•</span>
-                        <span>{format(new Date(request.lastUpdatedDate), "MMM d, yyyy")}</span>
-                      </div>
+                      <StatusBadge status={request.currentStatus} />
                     </div>
-                    <StatusBadge status={request.currentStatus} />
+                  ))
+                ) : (
+                  <div className="text-center py-6 text-muted-foreground">
+                    No requests match your current filters.
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-6 text-muted-foreground">
-                  No requests match your current filters.
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="space-y-4">
+            {selectedRequestData ? (
+              <FeatureSuggestionPanel 
+                category={selectedRequestData.category}
+                title={selectedRequestData.title}
+                description={selectedRequestData.description}
+              />
+            ) : (
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center py-6 text-muted-foreground">
+                    Select a request to see AI-powered feature insights
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </div>
       </div>
     </AppShell>
   );
