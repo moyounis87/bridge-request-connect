@@ -252,7 +252,7 @@ export function FeatureSuggestionPanel({ category, title, description }: Feature
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="pb-2">
         <CardTitle className="flex items-center">
           <Sparkles className="h-5 w-5 mr-2 text-primary" />
           AI Feature Intelligence
@@ -268,28 +268,28 @@ export function FeatureSuggestionPanel({ category, title, description }: Feature
           <TabsList className="flex w-full border-b">
             <TabsTrigger 
               value="related" 
-              className="flex-1 px-4 py-3 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:border-b-2 data-[state=active]:text-primary font-medium"
+              className="flex-1 px-2 py-2 border-b-2 border-transparent text-xs data-[state=active]:border-primary data-[state=active]:border-b-2 data-[state=active]:text-primary font-medium"
             >
-              <div className="flex items-center justify-center gap-2">
-                <Lightbulb className="h-4 w-4" />
+              <div className="flex items-center justify-center gap-1">
+                <Lightbulb className="h-3 w-3" />
                 <span className="hidden sm:inline">Related Features</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 
               value="bundles" 
-              className="flex-1 px-4 py-3 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:border-b-2 data-[state=active]:text-primary font-medium"
+              className="flex-1 px-2 py-2 border-b-2 border-transparent text-xs data-[state=active]:border-primary data-[state=active]:border-b-2 data-[state=active]:text-primary font-medium"
             >
-              <div className="flex items-center justify-center gap-2">
-                <Package className="h-4 w-4" />
+              <div className="flex items-center justify-center gap-1">
+                <Package className="h-3 w-3" />
                 <span className="hidden sm:inline">Feature Bundles</span>
               </div>
             </TabsTrigger>
             <TabsTrigger 
               value="timing" 
-              className="flex-1 px-4 py-3 border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:border-b-2 data-[state=active]:text-primary font-medium"
+              className="flex-1 px-2 py-2 border-b-2 border-transparent text-xs data-[state=active]:border-primary data-[state=active]:border-b-2 data-[state=active]:text-primary font-medium"
             >
-              <div className="flex items-center justify-center gap-2">
-                <Calendar className="h-4 w-4" />
+              <div className="flex items-center justify-center gap-1">
+                <Calendar className="h-3 w-3" />
                 <span className="hidden sm:inline">Release Timing</span>
               </div>
             </TabsTrigger>
